@@ -10,10 +10,12 @@ func Install(e *gin.Engine) {
 
     hostGroup := e.Group("/api/host")
     {
+        hostGroup.GET("", host.List)
         hostGroup.GET("/", host.List)
         hostGroup.GET("/:id", host.One)
         hostGroup.POST("/", host.Create)
         hostGroup.DELETE("/:id", host.Delete)
+        hostGroup.PATCH("", host.Update)
         hostGroup.PATCH("/", host.Update)
         hostGroup.POST("/update", host.AgentUpdate)
         hostGroup.GET("/:id/servers", host.Servers)
@@ -22,6 +24,18 @@ func Install(e *gin.Engine) {
     configurationGroup := e.Group("/api/configuration")
     {
         configurationGroup.GET("/:id", configuration.One)
+        configurationGroup.POST("", configuration.Update)
         configurationGroup.POST("/", configuration.Update)
     }
+
+    indexHandler := func(c *gin.Context) {
+        c.File("./assets/index.html")
+    }
+
+    e.GET("/", indexHandler)
+    e.GET("/servers", indexHandler)
+    e.GET("/server/:id", indexHandler)
+    e.GET("/hosts", indexHandler)
+    e.GET("/host/:id", indexHandler)
+    e.GET("/configurations", indexHandler)
 }
