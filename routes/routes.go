@@ -5,6 +5,8 @@ import (
     "rserverhub/modules/configuration"
     "rserverhub/modules/host"
     "rserverhub/modules/server"
+    "rserverhub/sockets"
+    "strconv"
 )
 
 func Install(e *gin.Engine) {
@@ -12,12 +14,10 @@ func Install(e *gin.Engine) {
     hostGroup := e.Group("/api/host")
     {
         hostGroup.GET("", host.List)
-        hostGroup.GET("/", host.List)
         hostGroup.GET("/:id", host.One)
-        hostGroup.POST("/", host.Create)
+        hostGroup.POST("", host.Create)
         hostGroup.DELETE("/:id", host.Delete)
         hostGroup.PATCH("", host.Update)
-        hostGroup.PATCH("/", host.Update)
         hostGroup.POST("/update", host.AgentUpdate)
         hostGroup.GET("/:id/servers", host.Servers)
     }
@@ -26,16 +26,13 @@ func Install(e *gin.Engine) {
     {
         configurationGroup.GET("/:id", configuration.One)
         configurationGroup.POST("", configuration.Update)
-        configurationGroup.POST("/", configuration.Update)
+        configurationGroup.GET("", configuration.All)
     }
 
     serverGroup := e.Group("/api/server")
     {
-        serverGroup.GET("/", server.All)
         serverGroup.GET("", server.All)
-        serverGroup.POST("/", server.Update)
         serverGroup.POST("", server.Update)
-        serverGroup.PATCH("/", server.Update)
         serverGroup.PATCH("", server.Update)
         serverGroup.GET("/info/:id", server.Get)
         serverGroup.GET("/logs/:id", server.GetLogs)
@@ -63,4 +60,22 @@ func Install(e *gin.Engine) {
     e.GET("/hosts", indexHandler)
     e.GET("/host/:id", indexHandler)
     e.GET("/configurations", indexHandler)
+    e.GET("/ws/queue/info", sockets.QueueInfo.Handle)
+    e.GET("/ws/queue/stats/:id", func(c *gin.Context) {
+        val, _ := strconv.Atoi(c.Param("id"))
+        if sockets.QueueStats[val] == nil {
+            sockets.QueueStats[val] = sockets.NewChannel()
+        }
+
+        sockets.QueueStats[val].Handle(c)
+    })
+
+    e.GET("/ws/queue/logs/:id", func(c *gin.Context) {
+        val, _ := strconv.Atoi(c.Param("id"))
+        if sockets.QueueLogs[val] == nil {
+            sockets.QueueLogs[val] = sockets.NewChannel()
+        }
+
+        sockets.QueueLogs[val].Handle(c)
+    })
 }

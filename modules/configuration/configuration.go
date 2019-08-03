@@ -23,3 +23,9 @@ func Update(c *gin.Context) {
 func Delete(c *gin.Context) {
     app.DB.Delete(models.Configuration{}, "id = ?", c.Param("id"))
 }
+
+func All(c *gin.Context)  {
+    var conf []models.Configuration
+    app.DB.Find(&conf)
+    c.JSON(200, conf)
+}

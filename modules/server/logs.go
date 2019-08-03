@@ -58,6 +58,5 @@ func SaveLogs(c *gin.Context) {
 }
 
 func GetLogs(c *gin.Context) {
-    var buffer []string
-    c.JSON(http.StatusOK, buffer)
+    c.JSON(http.StatusOK, []string{})
 }

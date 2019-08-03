@@ -5,6 +5,8 @@ import (
     "net/http"
     "rserverhub/app"
     "rserverhub/models"
+    "rserverhub/sockets"
+    "strconv"
 )
 
 const StatusUnknown = "UNKNOWN"
@@ -29,10 +31,13 @@ func Create(c *gin.Context) {
     host.Status = StatusUnknown
     app.DB.Create(&host)
     c.JSON(http.StatusOK, host)
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.HOST_CREATE, Payload: host})
 }
 
 func Delete(c *gin.Context) {
-    app.DB.Delete(models.Host{}, "id = ?", c.Param("id"))
+    val, _ := strconv.Atoi(c.Param("id"))
+    app.DB.Delete(models.Host{}, "id = ?", val)
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.HOST_DELETE, Payload: val})
 }
 
 func Update(c *gin.Context) {
@@ -41,6 +46,7 @@ func Update(c *gin.Context) {
     host.Status = StatusUnknown
     app.DB.Save(&host)
     c.JSON(http.StatusOK, host)
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.HOST_UPDATE, Payload: host})
 }
 
 func AgentUpdate(c *gin.Context) {
@@ -58,6 +64,7 @@ func AgentUpdate(c *gin.Context) {
     app.DB.Where("id = ?", payload.Host).Find(&host)
 
     // TODO: update server statuses
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.HOST_STATS, Payload: payload})
 }
 
 func Servers(c *gin.Context) {

@@ -3,6 +3,7 @@ package server
 import (
     "fmt"
     "github.com/go-resty/resty"
+    "rserverhub/sockets"
     "rserverhub/util"
     "time"
 )
@@ -27,6 +28,7 @@ func StartServer(c *gin.Context) {
     var server models.Server
     app.DB.Preload("Session", "date_stop is null").
         Preload("Host").
+        Preload("Configuration").
         Where("id = ?", c.Param("id")).Find(&server)
 
     if server.Session != nil {
@@ -38,10 +40,12 @@ func StartServer(c *gin.Context) {
     session.Status = StatusLoading
     session.ServerId = server.Id
     session.DateStart = time.Now()
-    tx.Save(server.Session)
+    tx.Save(session)
 
     util.Check(startServer(&server))
     tx.Commit()
+    server.Session = &session
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_UPDATE, Payload: server})
 }
 
 func StopServer(c *gin.Context) {
@@ -64,6 +68,7 @@ func StopServer(c *gin.Context) {
 
     util.Check(stopServer(&server))
     tx.Commit()
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_UPDATE, Payload: server})
 }
 
 func SendCommand(c *gin.Context) {

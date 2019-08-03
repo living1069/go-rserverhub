@@ -5,6 +5,8 @@ import (
     "net/http"
     "rserverhub/app"
     "rserverhub/models"
+    "rserverhub/sockets"
+    "strconv"
     "time"
 )
 
@@ -32,7 +34,7 @@ const (
     StatusError   = "ERROR"
 )
 
-func Get(c *gin.Context)  {
+func Get(c *gin.Context) {
     var server models.Server
     app.DB.Preload("Configuration").
         Preload("Host").
@@ -47,16 +49,30 @@ func Get(c *gin.Context)  {
 func Update(c *gin.Context) {
     var request editRequest
     _ = c.BindJSON(&request)
+
+    app.DB.Save(&request.Configuration)
+
     var server models.Server
     server.Id = request.Id
     server.HostId = request.Host.Id
-    server.Configuration = &request.Configuration
+    server.ConfigurationId = request.Configuration.Id
     server.AutoRestart = request.AutoRestart
     app.DB.Save(server)
+
+    server.Configuration = &request.Configuration
+
+    if request.Id != 0 {
+        sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_UPDATE, Payload: server})
+    } else {
+        sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_CREATE, Payload: server})
+    }
+
 }
 
 func Delete(c *gin.Context) {
-    app.DB.Delete(models.Server{}, "id = ?", c.Param("id"))
+    val, _ := strconv.Atoi(c.Param("id"))
+    app.DB.Delete(models.Server{}, "id = ?", val)
+    sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_DELETE, Payload: val})
 }
 
 func All(c *gin.Context) {
@@ -89,6 +105,7 @@ func AgentUpdate(c *gin.Context) {
         server.Session.Status = request.Status
         app.DB.Save(server.Session)
 
+        sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_UPDATE, Payload: server})
         if request.Status == StatusError && server.AutoRestart {
             startServer(&server)
         }

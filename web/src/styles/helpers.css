@@ -1,0 +1,44 @@
+.flex-between-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-center {
+   display: flex;
+   align-items: center;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.float-right {
+    float: right !important;
+}
+
+.float-left {
+    float: left !important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.flex-grow {
+    flex: 1 1 auto;
+}
+
+.flex-shrink {
+    flex: 0 0 auto
+}
+
+.fill-width {
+    width: 100%;
+}

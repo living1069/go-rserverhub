@@ -3,6 +3,7 @@ package util
 import (
     "github.com/gin-gonic/gin"
     "github.com/jinzhu/gorm"
+    "log"
     "net/http"
 )
 
@@ -47,6 +48,7 @@ func Handle(c *gin.Context) {
 
 func Check(err error) {
     if err != nil {
+        log.Println(err.Error())
         panic(err)
     }
 }
