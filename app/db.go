@@ -26,5 +26,7 @@ func CreateConnection() {
         log.Fatal(err.Error())
     }
 
-    DB.LogMode(true)
+    if _, b := os.LookupEnv("DB_LOG"); b {
+        DB.LogMode(true)
+    }
 }

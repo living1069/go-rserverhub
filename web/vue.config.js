@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     publicPath: "/assets",
-    outputDir: "../dist/",
+    outputDir: "../assets/",
     devServer: {
         disableHostCheck: true,
         proxy: {
