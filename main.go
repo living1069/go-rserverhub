@@ -6,10 +6,6 @@ import (
 )
 import _ "github.com/jinzhu/gorm/dialects/postgres"
 
-func init() {
-
-}
-
 func main() {
     app.CreateConnection()
     app.CreateEngine()
