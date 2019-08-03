@@ -16,7 +16,7 @@ func CreateConnection() {
     user := os.Getenv("DB_USER")
     db := os.Getenv("DB_NAME")
 
-    var uri = fmt.Sprintf("host=%s port=%s user=%d password=%s dbname=%s sslmode=disable",
+    var uri = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
         host, port, user, password, db)
 
     var err error
