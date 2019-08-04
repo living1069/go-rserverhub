@@ -7,6 +7,7 @@ import (
     "os"
     "rserverhub/app"
     "rserverhub/models"
+    "rserverhub/sockets"
     "rserverhub/util"
 )
 
@@ -42,7 +43,7 @@ func SaveLogs(c *gin.Context) {
 
             tx.Save(&log)
 
-            file, es = os.Create(".storage/logs/" + log.Filename)
+            file, es = os.Create("./storage/logs/" + log.Filename)
             util.Check(es)
 
         } else {
@@ -54,6 +55,10 @@ func SaveLogs(c *gin.Context) {
         }
 
         _ = file.Close()
+    }
+
+    if sockets.QueueLogs[int(server.Id)] != nil {
+        sockets.QueueLogs[int(server.Id)].Send(request.Logs)
     }
 }
 

@@ -36,11 +36,13 @@ func StartServer(c *gin.Context) {
         return
     }
 
+
     var session models.ServerSession
+    date := time.Now()
     session.Status = StatusLoading
     session.ServerId = server.Id
-    session.DateStart = time.Now()
-    tx.Save(session)
+    session.DateStart = &date
+    tx.Save(&session)
 
     util.Check(startServer(&server))
     tx.Commit()
@@ -53,8 +55,10 @@ func StopServer(c *gin.Context) {
     defer util.HandleTransaction(c, tx)
 
     var server models.Server
-    app.DB.Preload("Session", "date_stop is null").Where("id = ?", c.Param("id")).
+    app.DB.Preload("Session", "date_stop is null").
         Preload("Host").
+        Preload("Configuration").
+        Where("id = ?", c.Param("id")).
         Find(&server)
 
     if server.Session == nil {
@@ -62,8 +66,9 @@ func StopServer(c *gin.Context) {
         return
     }
 
+    date := time.Now()
     server.Session.Status = StatusDown
-    server.Session.DateStop = time.Now()
+    server.Session.DateStop = &date
     tx.Save(server.Session)
 
     util.Check(stopServer(&server))

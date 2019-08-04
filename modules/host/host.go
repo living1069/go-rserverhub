@@ -5,12 +5,13 @@ import (
     "net/http"
     "rserverhub/app"
     "rserverhub/models"
+    servermodule "rserverhub/modules/server"
     "rserverhub/sockets"
     "strconv"
 )
 
 const StatusUnknown = "UNKNOWN"
-const StatusUp = "UNKNOWN"
+const StatusUp = "UP"
 const StatusRemoving = "REMOVING"
 
 func List(c *gin.Context) {
@@ -62,6 +63,26 @@ func AgentUpdate(c *gin.Context) {
     _ = c.BindJSON(&payload)
     var host models.Host
     app.DB.Where("id = ?", payload.Host).Find(&host)
+
+    if host.Status != StatusUp {
+        host.Status = StatusUp
+        app.DB.Save(&host)
+        sockets.QueueInfo.Send(sockets.Message{Type: sockets.HOST_UPDATE, Payload: host})
+    }
+
+    for k, e := range payload.ServerStatuses {
+        var server models.Server
+        app.DB.Preload("Session", "date_stop is null").
+            Where("id = ?", k).
+            Find(&server)
+
+        if server.Session != nil && server.Session.Status != e {
+            _ = servermodule.AgentUpdateInternal(&servermodule.AgentUpdateRequest{
+                Server: k,
+                Status: e,
+            })
+        }
+    }
 
     // TODO: update server statuses
     sockets.QueueInfo.Send(sockets.Message{Type: sockets.HOST_STATS, Payload: payload})

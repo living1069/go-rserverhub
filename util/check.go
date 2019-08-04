@@ -11,6 +11,14 @@ type response struct {
     Message string `json:"message"`
 }
 
+type ErrorString struct {
+    S string
+}
+
+func (e *ErrorString) Error() string {
+    return e.S
+}
+
 func HandleTransaction(c *gin.Context, tx *gorm.DB) {
     r := recover()
 
@@ -19,7 +27,7 @@ func HandleTransaction(c *gin.Context, tx *gorm.DB) {
     }
 
     err, ok := r.(error)
-
+    log.Println(err.Error())
     if ok {
         c.JSON(http.StatusInternalServerError, response{Message: err.Error()})
     } else {
@@ -37,6 +45,7 @@ func Handle(c *gin.Context) {
     }
 
     err, ok := r.(error)
+    log.Println(err.Error())
 
     if ok {
         c.JSON(http.StatusInternalServerError, response{Message: err.Error()})
@@ -48,7 +57,6 @@ func Handle(c *gin.Context) {
 
 func Check(err error) {
     if err != nil {
-        log.Println(err.Error())
         panic(err)
     }
 }

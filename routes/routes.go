@@ -1,6 +1,7 @@
 package routes
 
 import (
+    "fmt"
     "github.com/gin-gonic/gin"
     "rserverhub/modules/configuration"
     "rserverhub/modules/host"
@@ -64,7 +65,7 @@ func Install(e *gin.Engine) {
     e.GET("/ws/queue/stats/:id", func(c *gin.Context) {
         val, _ := strconv.Atoi(c.Param("id"))
         if sockets.QueueStats[val] == nil {
-            sockets.QueueStats[val] = sockets.NewChannel()
+            sockets.QueueStats[val] = sockets.NewChannel(fmt.Sprintf("/queue/stats/%d", val))
         }
 
         sockets.QueueStats[val].Handle(c)
@@ -73,7 +74,7 @@ func Install(e *gin.Engine) {
     e.GET("/ws/queue/logs/:id", func(c *gin.Context) {
         val, _ := strconv.Atoi(c.Param("id"))
         if sockets.QueueLogs[val] == nil {
-            sockets.QueueLogs[val] = sockets.NewChannel()
+            sockets.QueueLogs[val] = sockets.NewChannel(fmt.Sprintf("/queue/logs/%d", val))
         }
 
         sockets.QueueLogs[val].Handle(c)

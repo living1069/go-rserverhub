@@ -8,4 +8,5 @@ type Server struct {
     ConfigurationId int64          `gorm:"column:id_configuration" json:"-"`
     Configuration   *Configuration `gorm:"foreignkey:ConfigurationId" json:"configuration"`
     Session         *ServerSession `gorm:"foreignkey:ServerId" json:"session"`
+
 }

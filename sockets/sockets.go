@@ -1,9 +1,12 @@
 package sockets
 
 import (
+    "encoding/json"
     "github.com/gin-gonic/gin"
     "github.com/gorilla/websocket"
+    "log"
     "net/http"
+    "os"
     "rserverhub/util"
 )
 
@@ -23,10 +26,11 @@ const (
 
 type Channel struct {
     Clients map[*websocket.Conn]bool
+    Name    string
 }
 
-func NewChannel() *Channel {
-    return &Channel{Clients: make(map[*websocket.Conn]bool)}
+func NewChannel(name string) *Channel {
+    return &Channel{Clients: make(map[*websocket.Conn]bool), Name: name}
 }
 
 func (p *Channel) Handle(c *gin.Context) {
@@ -37,11 +41,16 @@ func (p *Channel) Handle(c *gin.Context) {
 }
 
 func (p *Channel) Send(obj interface{}) {
+    if _, b := os.LookupEnv("SOCKET_LOG"); b {
+        v, _ := json.Marshal(obj)
+        log.Printf("%s = %s", p.Name, string(v))
+    }
+
     for e := range p.Clients {
         e.WriteJSON(obj)
     }
 }
 
-var QueueInfo *Channel = NewChannel()
+var QueueInfo *Channel = NewChannel("/queue/info")
 var QueueStats map[int]*Channel = make(map[int]*Channel)
 var QueueLogs map[int]*Channel = make(map[int]*Channel)

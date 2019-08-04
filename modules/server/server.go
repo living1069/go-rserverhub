@@ -6,6 +6,7 @@ import (
     "rserverhub/app"
     "rserverhub/models"
     "rserverhub/sockets"
+    "rserverhub/util"
     "strconv"
     "time"
 )
@@ -17,7 +18,7 @@ type editRequest struct {
     AutoRestart   bool                 `json:"autorestart"`
 }
 
-type agentUpdateRequest struct {
+type AgentUpdateRequest struct {
     Server int64  `json:"server"`
     Error  string `json:"error"`
     Status string `json:"status"`
@@ -60,6 +61,9 @@ func Update(c *gin.Context) {
     app.DB.Save(server)
 
     server.Configuration = &request.Configuration
+    var host models.Host
+    app.DB.Find(&host).Related(&server)
+    server.Host = &host
 
     if request.Id != 0 {
         sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_UPDATE, Payload: server})
@@ -88,18 +92,24 @@ func All(c *gin.Context) {
 }
 
 func AgentUpdate(c *gin.Context) {
-    var request agentUpdateRequest
+    var request AgentUpdateRequest
     c.BindJSON(&request)
+    defer util.Handle(c)
+    util.Check(AgentUpdateInternal(&request))
+}
 
+func AgentUpdateInternal(request *AgentUpdateRequest) error {
     var server models.Server
     app.DB.Preload("Session", "date_stop is null").
+        Preload("Configuration").
+        Preload("Host").
         Where("id = ?", request.Server).
         Find(&server)
 
     if server.Session != nil {
+        date := time.Now()
         if request.Status == StatusError || request.Status == StatusDown {
-            server.Session.DateStop = time.Now()
-            server.Session.Error = request.Error
+            server.Session.DateStop = &date
         }
 
         server.Session.Status = request.Status
@@ -110,8 +120,9 @@ func AgentUpdate(c *gin.Context) {
             startServer(&server)
         }
 
-        c.Status(200)
     } else {
-        c.JSON(400, response{Message: "Сервер не запущен"})
+        return &util.ErrorString{S: "Сервер не запущен"}
     }
+
+    return nil
 }
