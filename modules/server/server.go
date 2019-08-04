@@ -108,12 +108,14 @@ func AgentUpdateInternal(request *AgentUpdateRequest) error {
 
     if server.Session != nil {
         date := time.Now()
+        session := server.Session
         if request.Status == StatusError || request.Status == StatusDown {
-            server.Session.DateStop = &date
+            server.Session = nil
+            session.DateStop = &date
         }
 
-        server.Session.Status = request.Status
-        app.DB.Save(server.Session)
+        session.Status = request.Status
+        app.DB.Save(session)
 
         sockets.QueueInfo.Send(sockets.Message{Type: sockets.SERVER_UPDATE, Payload: server})
         if request.Status == StatusError && server.AutoRestart {

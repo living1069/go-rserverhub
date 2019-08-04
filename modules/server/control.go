@@ -36,7 +36,6 @@ func StartServer(c *gin.Context) {
         return
     }
 
-
     var session models.ServerSession
     date := time.Now()
     session.Status = StatusLoading
@@ -70,6 +69,8 @@ func StopServer(c *gin.Context) {
     server.Session.Status = StatusDown
     server.Session.DateStop = &date
     tx.Save(server.Session)
+
+    server.Session = nil
 
     util.Check(stopServer(&server))
     tx.Commit()
