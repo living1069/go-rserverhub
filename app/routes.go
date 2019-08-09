@@ -8,8 +8,8 @@ import (
 var Engine *gin.Engine
 
 func CreateEngine() {
-    Engine = gin.Default()
-    Engine.Static("/assets/", "./assets")
+    Engine = gin.Default()    
+    Engine.Static("/assets/", os.Getenv("ASSETS_PATH"))
     Engine.Use(cors.New(cors.Config{
         AllowOrigins:     []string{"*"},
         AllowMethods:     []string{"*"},
