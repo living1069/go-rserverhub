@@ -3,6 +3,7 @@ package routes
 import (
     "fmt"
     "github.com/gin-gonic/gin"
+    "os"
     "rserverhub/modules/configuration"
     "rserverhub/modules/host"
     "rserverhub/modules/server"
@@ -52,7 +53,7 @@ func Install(e *gin.Engine) {
     }
 
     indexHandler := func(c *gin.Context) {
-        c.File("./assets/index.html")
+        c.File(fmt.Sprintf("%s/index.html", os.Getenv("ASSETS_PATH")))
     }
 
     e.GET("/", indexHandler)
