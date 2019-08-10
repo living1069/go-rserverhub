@@ -43,7 +43,7 @@ func SaveLogs(c *gin.Context) {
 
             tx.Save(&log)
 
-            file, es = os.Create("./storage/logs/" + log.Filename)
+            file, es = os.Create("/storage/logs/" + log.Filename)
             util.Check(es)
 
         } else {
