@@ -113,11 +113,11 @@ export default {
     },
     log(log) {
       if (!log) return "#";
-      return `http://${this.$store.getters.endpoint}${log.filename}`;
+      return `http://${this.$store.getters.endpoint}/logs/${log.filename}`;
     },
     report(report) {
       if (!report) return "#";
-      return `http://${this.$store.getters.endpoint}${report.filename}`;
+      return `http://${this.$store.getters.endpoint}/reports/${report.filename}`;
     }
   }
 };

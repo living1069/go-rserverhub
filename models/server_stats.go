@@ -4,27 +4,27 @@ import "time"
 
 type ServerStats struct {
     Id                int64         `gorm:"primary_key"`
-    ServerId          int64         `gorm:"column:id_server"`
+    ServerId          int64         `gorm:"column:id_server" json:"id"`
     Server            Server        `gorm:"foreignkey:ServerId"`
     SessionId         int64         `gorm:"column:id_session"`
     Session           ServerSession `gorm:"foreignkey:SessionId"`
-    Time              *time.Time
-    Fps               float32
-    FpsMax            float32
-    FpsMin            float32
-    EngineUpdate      float32
-    EngineUpdateMax   float32
-    EngineUpdateMin   float32
-    ClientUpdate      float32
-    ClientUpdateMax   float32
-    ClientUpdateMin   float32
-    ShedulerUpdate    float32
-    ShedulerUpdateMax float32
-    ShedulerUpdateMin float32
-    BandwidthIn       float32
-    BandwidthOut      float32
-    ObjectsServer     int
-    ObjectsClient     int
-    TrafficOut        float32
-    TrafficIn         float32
+    Time              *time.Time    `json:"time"`
+    Fps               float32       `json:"fps"`
+    FpsMax            float32       `json:"fpsMax"`
+    FpsMin            float32       `json:"fpsMin"`
+    EngineUpdate      float32       `json:"engineUpdate"`
+    EngineUpdateMax   float32       `json:"engineUpdateMax"`
+    EngineUpdateMin   float32       `json:"engineUpdateMin"`
+    ClientUpdate      float32       `json:"clientUpdate"`
+    ClientUpdateMax   float32       `json:"lientUpdateMax"`
+    ClientUpdateMin   float32       `json:"cClientUpdateMin"`
+    ShedulerUpdate    float32       `json:"shedulerUpdate"`
+    ShedulerUpdateMax float32       `json:"shedulerUpdateMax"`
+    ShedulerUpdateMin float32       `json:"shedulerUpdateMin"`
+    BandwidthIn       float32       `json:"bandwidthIn"`
+    BandwidthOut      float32       `json:"bandwidthOut"`
+    ObjectsServer     int           `json:"objectsServer"`
+    ObjectsClient     int           `json:"objectsClient"`
+    TrafficOut        float32       `json:"trafficOut"`
+    TrafficIn         float32       `json:"trafficIn"`
 }

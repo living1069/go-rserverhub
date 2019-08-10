@@ -2,6 +2,7 @@ package routes
 
 import (
     "fmt"
+    "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
     "os"
     "rserverhub/modules/configuration"
@@ -12,6 +13,16 @@ import (
 )
 
 func Install(e *gin.Engine) {
+    e.Static("/assets/", os.Getenv("ASSETS_PATH"))
+
+    e.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"*"},
+        AllowMethods:     []string{"*"},
+        AllowHeaders:     []string{"*"},
+    }))
+
+    e.Static("/logs/", "/storage/logs/")
+    e.Static("/reports/", "/storage/reports/")
 
     hostGroup := e.Group("/api/host")
     {
