@@ -16,8 +16,8 @@ type ServerStats struct {
     EngineUpdateMax   float32       `json:"engineUpdateMax"`
     EngineUpdateMin   float32       `json:"engineUpdateMin"`
     ClientUpdate      float32       `json:"clientUpdate"`
-    ClientUpdateMax   float32       `json:"lientUpdateMax"`
-    ClientUpdateMin   float32       `json:"cClientUpdateMin"`
+    ClientUpdateMax   float32       `json:"clientUpdateMax"`
+    ClientUpdateMin   float32       `json:"clientUpdateMin"`
     ShedulerUpdate    float32       `json:"shedulerUpdate"`
     ShedulerUpdateMax float32       `json:"shedulerUpdateMax"`
     ShedulerUpdateMin float32       `json:"shedulerUpdateMin"`
@@ -27,4 +27,5 @@ type ServerStats struct {
     ObjectsClient     int           `json:"objectsClient"`
     TrafficOut        float32       `json:"trafficOut"`
     TrafficIn         float32       `json:"trafficIn"`
+    Players           int           `json:"players"`
 }
