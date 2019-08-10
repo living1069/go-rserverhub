@@ -57,6 +57,8 @@ func SaveLogs(c *gin.Context) {
         _ = file.Close()
     }
 
+    tx.Commit()
+
     if sockets.QueueLogs[int(server.Id)] != nil {
         sockets.QueueLogs[int(server.Id)].Send(request.Logs)
     }

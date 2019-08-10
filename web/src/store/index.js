@@ -8,7 +8,7 @@ export default new Vuex.Store({
     plugins: [createPersistedState()],
     state: {
         // endpoint: '10.8.0.1:9000',
-        endpoint: 'localhost:8080',
+        endpoint: window.location.host,
         dark: false
     },
     getters: {
