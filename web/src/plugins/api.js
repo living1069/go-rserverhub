@@ -1,9 +1,7 @@
 import axios from 'axios'
-import store from '@/store'
 
 export default {
     install: function (Vue) {
-        const endpoint = store.getters.endpoint;
         Object.defineProperty(Vue.prototype, '$api', {
             value: {
                 configurations: {
@@ -21,6 +19,7 @@ export default {
                     logs: (id) => axios.get(`/api/server/logs/${id}`),
                     delete: (id) => axios.delete(`/api/server/delete/${id}`),
                     command: (id, command) => axios.post(`/api/server/command/${id}`, command, { headers: { 'Content-Type': 'text/plain' } }),
+                    update: (id) => axios.post(`http://${window.location.host}/api/server/update/${id}`),
                     sessions: {
                         list: (id) => axios.get(`/api/server/sessions/${id}`),
                         clear: (server) => axios.delete(`/api/server/sessions/${server}`)

@@ -9,4 +9,5 @@ type Configuration struct {
     Arguments  string `json:"arguments"`
     Port       int    `json:"port"`
     Map        string `json:"map"`
+    Resources  string `json:"resources"`
 }

@@ -31,6 +31,12 @@ export default {
           value: this.configuration.directory
         },
         {
+          icon: "folder",
+          iconClass: "purple lighten-1 white--text",
+          title: "Путь к обновляемой директории ресурсов",
+          value: this.configuration.resources
+        },
+        {
           icon: "gesture",
           iconClass: "indigo lighten-1 white--text",
           title: "Путь к файлу fsgame.ltx",
@@ -53,7 +59,7 @@ export default {
           iconClass: "lime lighten-1 white--text",
           title: "Карта",
           value: this.configuration.map
-        }        
+        }
       ];
     }
   }

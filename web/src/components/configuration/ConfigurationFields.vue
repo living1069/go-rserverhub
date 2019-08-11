@@ -26,6 +26,15 @@
       auto-grow
     ></v-textarea>
     <v-textarea
+      label="Путь к обновляемым ресурсам игры"
+      v-model="data.resources"
+      :error-messages="validation.resources"
+      :disabled="busy"
+      prepend-icon="folder"
+      rows="1"
+      auto-grow
+    ></v-textarea>
+    <v-textarea
       label="Путь к файлу fsgame.ltx"
       :disabled="busy"
       v-model="data.fsgame"
@@ -73,6 +82,7 @@ export default {
       directory: { required },
       fsgame: { required },
       arguments: { required },
+      resources: { required },
       port: { required, numeric },
       map: { required }
     }
@@ -87,6 +97,9 @@ export default {
         ret.executable = "Поле не может быть пустым";
 
       if (this.$v.data.directory.$dirty && !this.$v.data.directory.required)
+        ret.directory = "Поле не может быть пустым";
+
+      if (this.$v.data.resources.$dirty && !this.$v.data.resources.required)
         ret.directory = "Поле не может быть пустым";
 
       if (this.$v.data.name.$dirty && !this.$v.data.fsgame.required)

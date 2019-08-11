@@ -121,6 +121,7 @@ export default {
           directory: null,
           fsgame: null,
           arguments: null,
+          resources: null,
           port: null,
           map: null
         }

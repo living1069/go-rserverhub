@@ -1,103 +1,59 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs3>
-        <flex-divider left>
-          <p class="headline mb-2 text-truncate">Игроки</p>
-          <p class="subheading mb-0 text-truncate">{{players}}</p>
-        </flex-divider>
+  <v-layout column>
+    <v-layout class="px-4 pb-2 pt-4" style="max-height: 300px">
+      <v-flex xs6 class="pr-2">
+        <iframe
+          :class="{border: !this.$store.getters.dark}"
+          :src="`http://10.8.0.1:9400/d-solo/Or3PhOZZz/roh?orgId=1&var-server=${server.id}&theme=${theme}&panelId=2`"
+          frameborder="0"
+        ></iframe>
       </v-flex>
-      <v-flex xs3>
-        <flex-divider>
-          <p class="headline mb-2 text-truncate">Время работы</p>
-          <p class="subheading mb-0 text-truncate">{{uptime}}</p>
-        </flex-divider>
-      </v-flex>
-      <v-flex xs3>
-        <flex-divider>
-          <p class="headline mb-2 text-truncate">Игровое время</p>
-          <p class="subheading mb-0 text-truncate">{{gametime}}</p>
-        </flex-divider>
+      <v-flex class="pl-2">
+        <iframe
+          :class="{border: !this.$store.getters.dark}"
+          :src="`http://10.8.0.1:9400/d-solo/Or3PhOZZz/roh?orgId=1&var-server=${server.id}&theme=${theme}&panelId=4`"
+          frameborder="0"
+        ></iframe>
       </v-flex>
     </v-layout>
-    <v-divider class="my-4"/>
-    <v-layout>
-      <v-flex xs6>
-        <flex-divider>
-          <v-card flat>
-            <p class="title font-weight-light mb-0 ml-1">FPS</p>
-            <server-monitoring-chart
-              :dataset="fps"
-              :height="200"
-              class="mt-3"
-            />
-          </v-card>
-        </flex-divider>
+    <v-layout class="px-4 py-2" style="max-height: 300px">
+      <v-flex xs6 class="pr-2">
+        <iframe
+          :class="{border: !this.$store.getters.dark}"
+          :src="`http://10.8.0.1:9400/d-solo/Or3PhOZZz/roh?orgId=1&var-server=${server.id}&theme=${theme}&panelId=14`"
+          frameborder="0"
+        ></iframe>
       </v-flex>
-      <v-flex xs6>
-        <flex-divider>
-          <v-card flat>
-            <p class="title font-weight-light mb-0 ml-1">Update (ms)</p>
-            <server-monitoring-chart
-              :dataset="engine"
-              :height="200"
-              class="mt-3"
-            />
-          </v-card>
-        </flex-divider>
+      <v-flex class="pl-2">
+        <iframe
+          :class="{border: !this.$store.getters.dark}"
+          :src="`http://10.8.0.1:9400/d-solo/Or3PhOZZz/roh?orgId=1&var-server=${server.id}&theme=${theme}&panelId=12`"
+          frameborder="0"
+        ></iframe>
       </v-flex>
     </v-layout>
-  </div>
+  </v-layout>
 </template>
 
 <script>
-import ServerMonitoringChart from "./ServerMonitoringChart";
-import FlexDivider from "@/components/shared/FlexDivider";
-import moment from "moment";
-import momentDurationFormatSetup from "moment-duration-format";
-
-momentDurationFormatSetup(moment);
-moment.locale("ru");
-
-var self = null;
-
 export default {
-  props: ["id"],
-  components: {
-    ServerMonitoringChart,
-    FlexDivider
-  },
+  props: ["server"],
   computed: {
-    uptime() {
-      if (this.stats)
-        return moment
-          .duration(this.stats.uptime, "milliseconds")
-          .format("HH:mm:ss");
-      else return "00:00:00";
-    },
-    gametime() {
-      if (this.stats)
-        return moment(this.stats.gametime).format("YYYY.MM.DD HH:mm:ss");
-      else return "00:00:00";
-    },
-    players() {
-      if (this.stats) return this.stats.players;
-      else return 0;
-    },
-    stats: () => self.$store.state.server.stats,
-    fps: () => self.$store.state.server.dataset.fps,
-    engine: () => self.$store.state.server.dataset.engine
-  },
-  watch: {
-    id: function(value, old) {
-      console.log(value, old);
+    theme() {
+      return this.$store.getters.dark ? "dark" : "light";
     }
-  },
-  created() {
-    self = this;
   }
 };
 </script>
 
 <style>
+.border {
+  border: 1px solid lightgray;
+  padding: 1px;
+}
+
+iframe {
+  height: 100%;
+  width: 100%;
+}
 </style>

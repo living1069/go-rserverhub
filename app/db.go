@@ -5,6 +5,7 @@ import (
     "github.com/jinzhu/gorm"
     "log"
     "os"
+    "rserverhub/models"
 )
 
 var DB *gorm.DB
@@ -29,4 +30,6 @@ func CreateConnection() {
     if _, b := os.LookupEnv("DB_LOG"); b {
         DB.LogMode(true)
     }
+
+    DB.AutoMigrate(&models.Configuration{})
 }

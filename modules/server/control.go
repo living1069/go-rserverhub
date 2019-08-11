@@ -1,6 +1,7 @@
 package server
 
 import (
+    "encoding/json"
     "fmt"
     "github.com/go-resty/resty"
     "rserverhub/sockets"
@@ -94,6 +95,23 @@ func SendCommand(c *gin.Context) {
 
     defer util.Handle(c)
     util.Check(sendCommand(&server, str))
+}
+
+func UpdateServer(c *gin.Context) {
+    var server models.Server
+
+    app.DB.Where("id = ?", c.Param("id")).
+        Preload("Host").
+        Preload("Configuration").
+        Find(&server)
+
+    uri := fmt.Sprintf("http://%s:9090/api/update/%d", server.Host.Address, server.Id)
+    client := resty.New()
+    client.SetTimeout(time.Hour)
+    e, _ := client.R().SetBody(server.Configuration).Post(uri)
+    var buffer map[string]interface{}
+    json.Unmarshal(e.Body(), &buffer)
+    c.JSON(200, buffer)
 }
 
 func startServer(server *models.Server) error {

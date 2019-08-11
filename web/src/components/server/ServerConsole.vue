@@ -6,7 +6,7 @@
     </div>
     <div v-show="ready" id="log-container" class="flex-column flex-grow pa-2">
       <div id="log-content" class="log-content" v-show="logs.length > 0">
-        <p :class="`mb-0 subheading ${logColor(log)}`" v-for="(log, id) in logs" :key="id">{{log}}</p>
+        <p :class="`mb-0 body-1 ${logColor(log)}`" v-for="(log, id) in logs" :key="id">{{log}}</p>
       </div>
       <v-layout fill-height justify-center align-center v-show="logs.length == 0">
         <v-icon large>watch_later</v-icon>

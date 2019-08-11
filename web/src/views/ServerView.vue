@@ -13,6 +13,7 @@
         <v-layout column>
           <server-info v-show="active==0" :server="server" class="mt-4"/>
           <server-console v-show="active==1" :server="server"/>          
+          <server-monitoring v-if="active==2" :server="server"/>
         </v-layout>
       </v-layout>
     </request-loader>
@@ -23,6 +24,7 @@
 import ServerInfo from "@/components/server/ServerInfo";
 import ServerConsole from "@/components/server/ServerConsole";
 import ServerActions from "@/components/server/ServerActions";
+import ServerMonitoring from "@/components/server/ServerMonitoring";
 import RequestLoader from "@/components/shared/RequestLoader";
 
 export default {
@@ -30,13 +32,14 @@ export default {
     RequestLoader,
     ServerInfo,
     ServerConsole,    
-    ServerActions
+    ServerActions,
+    ServerMonitoring
   },
   props: ["id"],
   data: () => ({
     active: 0,
     serverAddDialogVisible: false,
-    tabs: ["Информация", "Консоль"],
+    tabs: ["Информация", "Консоль", "Мониторинг"],
     ready: false,
     server: null,
     error: false
