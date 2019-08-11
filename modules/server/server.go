@@ -58,7 +58,7 @@ func Update(c *gin.Context) {
     server.HostId = request.Host.Id
     server.ConfigurationId = request.Configuration.Id
     server.AutoRestart = request.AutoRestart
-    app.DB.Save(server)
+    app.DB.Save(&server)
 
     server.Configuration = &request.Configuration
     var host models.Host

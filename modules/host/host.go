@@ -62,7 +62,10 @@ func AgentUpdate(c *gin.Context) {
     var payload agentUpdateObject
     _ = c.BindJSON(&payload)
     var host models.Host
-    app.DB.Where("id = ?", payload.Host).Find(&host)
+    if app.DB.Where("id = ?", payload.Host).Find(&host).RecordNotFound() {
+        c.Status(404)
+        return
+    }
 
     if host.Status != StatusUp {
         host.Status = StatusUp
